@@ -167,6 +167,13 @@
   become: true
   tags: process_exporter
 
+- name: enable capabilities to ports lower than port 1024
+  capabilities:
+    path: "{{ process_exporter_binary_install_dir }}/process_exporter"
+    capability: CAP_NET_BIND_SERVICE+ep
+    state: present
+  when: process_exporter_web_listen_port <= 1024
+
 - name: allow binding to port in selinux
   seport:
     ports: "{{ process_exporter_web_listen_port }}"
@@ -179,21 +186,64 @@
   become: true
   tags: process_exporter
 
-- name: allow access to port on firewalld
+- name: check whether ufw status is active
+  command: "ufw status"
+  changed_when: False
+  ignore_errors: True
+  register: _ufw_status
+  become: true
+  when:
+    - process_exporter_allow_firewall
+    - ansible_os_family == 'Debian'
+  tags: process_exporter
+
+- name: configure ufw
+  community.general.ufw:
+    rule: allow
+    port: "{{ process_exporter_web_listen_port }}"
+    proto: tcp
+    state: enabled
+    comment: "process_exporter"
+  notify: reload ufw
+  become: true
+  tags: process_exporter
+  register: "_firewalld_process_exporter_state"
+  when:
+    - "'active' in _ufw_status.stdout"
+    - ansible_os_family == 'Debian'
+    - process_exporter_allow_firewall
+
+- name: reload ufw
+  systemd:
+    name: ufw
+    state: reloaded
+  when:
+    - _firewalld_process_exporter_state['changed']
+    - ansible_os_family == 'Debian'
+    - process_exporter_allow_firewall
+  become: true
+  tags: process_exporter
+
+- name: configure firewalld
   firewalld:
     port: "{{ process_exporter_web_listen_port }}/tcp"
     permanent: yes
     state: true
-  when: process_exporter_firewalld_state == "enabled"
+  when:
+    - process_exporter_allow_firewall
+    - ansible_os_family == 'RedHat'
   register: "_firewalld_process_exporter_state"
   become: true
   tags: process_exporter
 
-- name: reload firewalld service
-  service:
+- name: reload firewalld
+  systemd:
     name: firewalld
     state: reloaded
-  when: _firewalld_process_exporter_state['changed']
+  when:
+    - process_exporter_allow_firewall
+    - _firewalld_process_exporter_state['changed']
+    - - ansible_os_family == 'RedHat'
   become: true
   tags: process_exporter
 

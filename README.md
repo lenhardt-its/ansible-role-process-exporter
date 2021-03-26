@@ -1,4 +1,14 @@
-# Ansible Role: process_exporter
+# Ansible Role: Process Exporter
+
+[![ubuntu-18](https://img.shields.io/badge/ubuntu-18.x-orange?style=flat&logo=ubuntu)](https://ubuntu.com/)
+[![ubuntu-20](https://img.shields.io/badge/ubuntu-20.x-orange?style=flat&logo=ubuntu)](https://ubuntu.com/)
+[![debian-9](https://img.shields.io/badge/debian-9.x-orange?style=flat&logo=debian)](https://www.debian.org/)
+[![debian-10](https://img.shields.io/badge/debian-10.x-orange?style=flat&logo=debian)](https://www.debian.org/)
+[![centos-7](https://img.shields.io/badge/centos-7.x-orange?style=flat&logo=centos)](https://www.centos.org/)
+[![centos-8](https://img.shields.io/badge/centos-8.x-orange?style=flat&logo=centos)](https://www.centos.org/)
+[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
+[![GitHub issues](https://img.shields.io/github/issues/OnkelDom/ansible-role-process-exporter?style=flat)](https://github.com/OnkelDom/ansible-role-process-exporter/issues)
+[![GitHub tag](https://img.shields.io/github/tag/OnkelDom/ansible-role-process-exporter.svg?style=flat)](https://github.com/OnkelDom/ansible-role-process-exporter/tags)
 
 ## Description
 
@@ -6,7 +16,8 @@ Deploy [process-exporter](https://github.com/ncabatoff/process-exporter) using a
 
 ## Requirements
 
-- Ansible >= 2.6 (It might work on previous versions, but we cannot guarantee it)
+- Ansible >= 2.9 (It might work on previous versions, but we cannot guarantee it)
+- Community Packages: `ansible-galaxy collection install community.general`
 
 ## Role Variables
 
@@ -15,13 +26,15 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | Name           | Default Value | Description                        |
 | -------------- | ------------- | -----------------------------------|
 | `proxy_env` | {} | Proxy environment variables |
-| `process_exporter_version` | 0.5.0 | Process exporter package version. Also accepts latest as parameter |
-| `process_exporter_web_listen_address` | "0.0.0.0:9256" | Address on which process_exporter will listen |
-| `process_exporter_config_dir` | "/etc/process_exporter" | Path to directory with process_exporter configuration |
-| `process_exporter_names` | [see: defaults/main.yml](defaults/main.yml#L8) | Processes which should be monitored. Syntax is the same as in https://github.com/ncabatoff/process-exporter#using-a-config-file Default is consistent with deb/rpm packages.|
-| `process_exporter_create_consul_agent_service` | "true" | Add consul agent config snipped |
-
-`process_exporter_names` handling has been set up in an unusual way to handle recommended process-exporter 'Template variables' (such as {{.Comm}}). Follow the example in [defaults/main.yml](defaults/main.yml) if you want to define custom filtering/grouping of processes that use Template variables and make sure to keep the {% raw %} block delimiters.
+| `process_exporter_allow_firewall` | false | enable firewall access |
+| `process_exporter_binary_install_dir` | /usr/local/bin | default bin dir |
+| `process_exporter_version` | 0.7.2 | app version |
+| `process_exporter_web_listen_address` | 0.0.0.0 | default listen address |
+| `process_exporter_web_listen_port` | 9256 | default listen port |
+| `process_exporter_config_dir` | /etc/process_exporter | default config dir |
+| `process_exporter_system_user` | "{{ prometheus_user | default('prometheus') }}" | defuault system user |
+| `process_exporter_system_group` | "{{ prometheus_group | default('prometheus') }}" | default system group |
+| `process_exporter_names` | {} | handling has been set up in an unusual way to handle recommended process-exporter 'Template variables' (such as {{.Comm}}). Follow the example in [defaults/main.yml](defaults/main.yml) if you want to define custom filtering/grouping of processes that use Template variables and make sure to keep the {% raw %} block delimiters. |
 
 ## Example
 
@@ -31,7 +44,7 @@ Use it in a playbook as follows:
 ```yaml
 - hosts: all
   roles:
-    - ansible-role-process_exporter
+    - onkeldom.process_exporter
 ```
 
 ## Contributing

@@ -1,6 +1,6 @@
 ---
 proxy_env: {}
-process_exporter_firewalld_state: "disabled"
+process_exporter_allow_firewall: false
 process_exporter_binary_install_dir: "/usr/local/bin"
 process_exporter_version: 0.7.2
 process_exporter_web_listen_address: "0.0.0.0"

@@ -13,10 +13,3 @@
     state: reloaded
   become: true
   tags: process_exporter
-
-- name: reload consul
-  systemd:
-    name: consul
-    state: reloaded
-  become: true
-  tags: process_exporter
