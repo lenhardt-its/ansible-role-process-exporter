@@ -34,8 +34,8 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `process_exporter_web_listen_address` | 0.0.0.0 | default listen address |
 | `process_exporter_web_listen_port` | 9256 | default listen port |
 | `process_exporter_config_dir` | /etc/process_exporter | default config dir |
-| `process_exporter_system_user` | "{{ prometheus_user | default('prometheus') }}" | defuault system user |
-| `process_exporter_system_group` | "{{ prometheus_group | default('prometheus') }}" | default system group |
+| `process_exporter_system_user` | prometheus | defuault system user |
+| `process_exporter_system_group` | prometheus | default system group |
 | `process_exporter_names` | {} | handling has been set up in an unusual way to handle recommended process-exporter 'Template variables' (such as {{.Comm}}). Follow the example in [defaults/main.yml](defaults/main.yml) if you want to define custom filtering/grouping of processes that use Template variables and make sure to keep the {% raw %} block delimiters. |
 
 ## Example
