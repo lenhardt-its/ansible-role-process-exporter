@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: process-exporter
+  role_name: process_exporter
   author: Dominik Lenhardt
   description: Ansible role for installing and configuring Process Exporter
   license: "MIT"
