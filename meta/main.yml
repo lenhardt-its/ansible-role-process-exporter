@@ -25,6 +25,5 @@ galaxy_info:
   - monitoring
   - prometheus
   - process
-  - process_exporter
   - exporter
 dependencies: []
